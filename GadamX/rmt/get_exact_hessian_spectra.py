@@ -1,0 +1,114 @@
+"""
+Obtain the hessian spectrum over minibatches of some batch size.
+"""
+import argparse
+
+import sys
+
+sys.path.append('..')
+import h5py
+import math
+import numpy as np
+import torch
+from curvature import data, models, losses
+from tqdm import tqdm
+from torch.utils.data import TensorDataset
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--dataset", type=str, default="MNIST")
+parser.add_argument("--data_path", type=str, default="data")
+parser.add_argument("--model", type=str, default="Logistic")
+parser.add_argument("--checkpoint", type=str, required=True)
+parser.add_argument("--bs", type=int, default=64)
+parser.add_argument("-test", action="store_true", help="If to eval on test set.")
+parser.add_argument("--out", type=str, default="output/spectrum.hdf5")
+
+args = parser.parse_args()
+
+network = args.model
+epochsave = int(args.checkpoint.split('checkpoint-')[1].split('.')[0])
+
+print('Using model %s' % args.model)
+model_cfg = getattr(models, args.model)
+
+if args.dataset == "Tensor":
+    full_datasets = {}
+    for subset in ["train", "test"]:
+        dataset = os.path.join(args.data_path, subset)
+        x = torch.tensor(np.load(os.path.join(dataset, "features.npy")))
+        y = torch.tensor(np.load(os.path.join(dataset, "labels.npy")))
+        dset = TensorDataset(x, y)
+        full_datasets[subset] = dset
+    num_classes = len(torch.unique(y))
+
+else:
+    datasets, num_classes = data.datasets(
+        args.dataset,
+        args.data_path,
+        transform_train=model_cfg.transform_test,
+        transform_test=model_cfg.transform_test,
+        use_validation=False,
+        train_subset=None,
+        train_subset_seed=None,
+    )
+
+
+    full_datasets, _ = data.datasets(
+        args.dataset,
+        args.data_path,
+        transform_train=model_cfg.transform_train,
+        transform_test=model_cfg.transform_test,
+        use_validation=False,
+    )
+
+
+if args.test:
+    dset = full_datasets['test']
+else:
+    dset = full_datasets["train"]
+n_data = len(dset)
+
+batch_size = args.bs if args.bs > 0 else n_data
+full_loader = torch.utils.data.DataLoader(
+    dset,
+    batch_size=batch_size,
+    shuffle=False,
+    num_workers=4,
+    pin_memory=True
+)
+
+model = model_cfg.base(*model_cfg.args, num_classes=num_classes, input_dim=np.prod(dset[0][0].shape), **model_cfg.kwargs)
+
+if torch.cuda.is_available():
+    device = torch.device('cuda')
+else:
+    device = torch.device('cpu')
+if batch_size > 128:
+    device = "cpu"
+
+#device = torch.device('cpu')
+model.to(device)
+num_parametrs = sum([p.numel() for p in model.parameters()])
+criterion = losses.cross_entropy
+
+
+outfile = h5py.File(args.out, "w")
+hessian_evals = outfile.create_dataset("hessian_evals", (int(math.ceil(n_data / batch_size)), num_parametrs), dtype=float)
+
+model.zero_grad()
+for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
+    hessian = torch.zeros(num_parametrs, num_parametrs).cpu()
+    model.zero_grad()
+    input = input.to(device)
+    target = target.to(device)
+    loss, _, _ = criterion(model, input, target)
+    loss *= input.size()[0]
+
+    grad_list = torch.autograd.grad(loss, model.parameters(), create_graph=True)
+    grad_i = torch.cat([g.view(-1) for g in grad_list]).cpu()
+    for i in range(0, num_parametrs):
+        hessian[i] = torch.cat(
+            [g.view(-1) for g in torch.autograd.grad(grad_i[i], model.parameters(), create_graph=True)]).cpu()
+    hessian_evals[batch_ind] = np.linalg.eigvalsh(hessian.detach().cpu().numpy())
+    del hessian

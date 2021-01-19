@@ -1,0 +1,15 @@
+ 
+ University of Bristol ACRC HPC Bluepebble Service
+ -------------------------------------------------
+ Job get_exact_hessian_spectra_mnist_untrained_all.sh, jobid 483136.bp1, username jr19127 - started execution at 08 :55:37 Fri 11/27/20 on node bp1-13-13-04.data.bp.acrc.priv
+ 
+Backpack is not found - all backpack-related functions are disabled!
+Using model Logistic
+Loading MNIST from /work/jr19127/data/MNIST
+tensor([5, 0, 4,  ..., 5, 6, 8])
+You are going to run models on the test set. Are you sure?
+Using train (60000) + test (10000)
+Loading MNIST from /work/jr19127/data/MNIST
+tensor([5, 0, 4,  ..., 5, 6, 8])
+You are going to run models on the test set. Are you sure?
+Using train (60000) + test (10000)
