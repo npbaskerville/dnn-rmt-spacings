@@ -1,4 +1,4 @@
-Code to accompany the paper "Local spectra; statistics of neaural network hessians".
+Code to accompany the paper "Understanding the applicability of random matrix theory in deep learning".
 
 ## Set-up
 
