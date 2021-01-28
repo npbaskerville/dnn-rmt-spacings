@@ -1,4 +1,4 @@
-This code is a (very)  paired-down version of [GadamX](https://github.com/diegogranziol/GadamX) with a few small modifications to make it work with up-to-date torch and torchvision and use tensor datasets (needed to Resnet50 embedded CIFAR10).
+This code is a (very)  paired-down version of [GadamX](link to repo here) with a few small modifications to make it work with up-to-date torch and torchvision and use tensor datasets (needed to Resnet50 embedded CIFAR10).
 
 
 What follows is the original README
