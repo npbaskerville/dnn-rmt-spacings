@@ -20,4 +20,7 @@ The training is done with GadamX, a very paired-down version of which is include
 The python script `GadamX/rmt/get_exact_hessian_spectra.py` loads in pre-trained models and computes the hessian over a dataset in specified batch sizes. The hessian eigenvalues are computed and saved in HDF5 format. The scripts `experiments_scripts/get_exact_hessian_spectra_*.sh` were used by the authors to obtain the required spectra used in the paper.
 
 ### Analysing the spectra
-Once the above has been completed, one should have hessian spectra for the different models and conditions storred in HDF5 format on disk. The notebook in `notebooks` read these spectra in and do unfolding and spacing ratio calculations to generate the figures in the paper. 
+Once the above has been completed, one should have hessian spectra for the different models and conditions storred in HDF5 format on disk. The notebooks in `notebooks` read these spectra in and do unfolding and spacing ratio calculations to generate the figures in the paper. 
+
+### Exponential hardness of the true loss
+The eponymous directory under `notebook` contains the notebook to produce the results matching true loss curves for ImageNet to exponentials. We used the [script](https://github.com/pytorch/examples/tree/master/imagenet) in the PyTorch examples to train on ImageNet.
