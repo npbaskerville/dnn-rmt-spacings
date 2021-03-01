@@ -1,4 +1,4 @@
-Code to accompany the paper "Understanding the applicability of random matrix theory in deep learning".
+Code to accompany the paper [Applicability of random matrix theory in deep learning](https://arxiv.org/abs/2102.06740).
 
 ## Set-up
 
