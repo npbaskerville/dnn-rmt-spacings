@@ -7,12 +7,12 @@ __all__ = ['MLP_CIF', 'MLP', 'MLP_med', 'MLP_big', 'MLP_sdp', 'MLP_deep']
 class NN_CIF(nn.Module):
     def __init__(self, num_classes=10, input_dim=28*28):
         super().__init__()
-        self.lin1 = nn.Linear(32*32, 10, bias=True)
+        self.lin1 = nn.Linear(32*32*3, 10, bias=True)
         self.lin2 = nn.Linear(10, 300, bias=True)
         self.lin3 = nn.Linear(300, 100, bias=True)
 
     def forward(self, xb):
-        x = xb.view(-1,32*32)
+        x = xb.view(-1,32*32*3)
         x = F.relu(self.lin1(x))
         x = F.relu(self.lin2(x))
         return self.lin3(x)
