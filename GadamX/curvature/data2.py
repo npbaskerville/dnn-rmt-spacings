@@ -69,7 +69,7 @@ def datasets(
         train_set.data = train_set.data[order[:train_subset]]
         train_set.targets = np.array(train_set.targets)[order[:train_subset]].tolist()
 
-    print('Using train (%d) + test (%d)' % (train_set.train_data.shape[0], test_set.test_data.shape[0]))
+    #print('Using train (%d) + test (%d)' % (train_set.train_data.shape[0], test_set.test_data.shape[0]))
 
     return \
         {

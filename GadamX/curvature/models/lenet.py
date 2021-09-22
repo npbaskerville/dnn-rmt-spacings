@@ -7,7 +7,7 @@ __all__ = ['LeNet']
 
 
 class LeNetBase(nn.Module):
-    def __init__(self, num_classes=10):
+    def __init__(self, num_classes=10, **kwargs):
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5),
