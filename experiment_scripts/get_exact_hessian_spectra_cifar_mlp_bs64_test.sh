@@ -17,4 +17,4 @@ cd /home/jr19127/nn-spectral-spacings/GadamX/rmt
 
 
 # Execute code
-python get_exact_hessian_spectra.py --data_path $WORK/data/cifar10 --model MLP --dataset Tensor --checkpoint=$WORK/nn_spectral_models/CIFAR10/MLP/SGD/checkpoint-00300.pt --out $WORK/nn_spectral_models/hessian_spectra/CIFAR10/MLP/bs64_test.hdf5 -test
+python get_exact_hessian_spectra.py --data_path $WORK/data/cifar10 --model MLP --dataset CIFAR10 --checkpoint=$WORK/nn_spectral_models/CIFAR10/MLP/SGD/checkpoint-00300.pt --out $WORK/nn_spectral_models/hessian_spectra/CIFAR10/MLP/bs64_test.hdf5 -test
