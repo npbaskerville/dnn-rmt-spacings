@@ -1,9 +1,0 @@
-/home/jr19127/.local/lib/python3.7/site-packages/torchvision/transforms/transforms.py:840: UserWarning: The use of the transforms.RandomSizedCrop transform is deprecated, please use transforms.RandomResizedCrop instead.
-  warnings.warn("The use of the transforms.RandomSizedCrop transform is deprecated, " +
-/home/jr19127/.local/lib/python3.7/site-packages/torchvision/datasets/mnist.py:58: UserWarning: train_data has been renamed data
-  warnings.warn("train_data has been renamed data")
-/home/jr19127/.local/lib/python3.7/site-packages/torchvision/datasets/mnist.py:63: UserWarning: test_data has been renamed data
-  warnings.warn("test_data has been renamed data")
-/home/jr19127/.local/lib/python3.7/site-packages/torch/cuda/__init__.py:52: UserWarning: CUDA initialization: Found no NVIDIA driver on your system. Please check that you have an NVIDIA GPU and installed a driver from http://www.nvidia.com/Download/index.aspx (Triggered internally at  /pytorch/c10/cuda/CUDAFunctions.cpp:100.)
-  return torch._C._cuda_getDeviceCount() > 0
-0it [00:00, ?it/s]=>> PBS: job killed: mem 122869984kb exceeded limit 99614720kb
