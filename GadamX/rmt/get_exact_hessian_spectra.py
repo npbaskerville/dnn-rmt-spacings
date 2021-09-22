@@ -106,9 +106,9 @@ for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     loss *= input.size()[0]
 
     grad_list = torch.autograd.grad(loss, model.parameters(), create_graph=True)
-    grad_i = torch.cat([g.view(-1) for g in grad_list]).cpu()
+    grad_i = torch.cat([g.reshape(-1) for g in grad_list]).cpu()
     for i in range(0, num_parametrs):
         hessian[i] = torch.cat(
-            [g.view(-1) for g in torch.autograd.grad(grad_i[i], model.parameters(), create_graph=True)]).cpu()
+            [g.reshape(-1) for g in torch.autograd.grad(grad_i[i], model.parameters(), create_graph=True)]).cpu()
     hessian_evals[batch_ind] = np.linalg.eigvalsh(hessian.detach().cpu().numpy())
     del hessian
