@@ -41,7 +41,7 @@ def datasets(
     else:
         raise TypeError("val_size needs to be either an int or a float, but got "+type(val_size))
     print(train_set.targets)
-    num_classes = torch.max(train_set.targets).item() + 1
+    num_classes = torch.max(torch.as_tensor(train_set.targets)).item() + 1
     if use_validation:
         print('Using %d samples for validation [deterministic split]' % (val_size))
         train_set.data = train_set.data[:-val_size]
