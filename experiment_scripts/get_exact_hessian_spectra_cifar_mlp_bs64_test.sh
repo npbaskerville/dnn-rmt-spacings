@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#PBS -l walltime=96:00:00
-#PBS -l select=1:ncpus=2:ngpus=1:ssd=true:mem=25gb
+#PBS -l walltime=48:00:00
+#PBS -l select=1:ncpus=2:ngpus=1:ssd=true:mem=50gb
 
 
 module load lang/gcc/9.1.0 
@@ -17,4 +17,4 @@ cd /home/jr19127/nn-spectral-spacings/GadamX/rmt
 
 
 # Execute code
-python get_exact_hessian_spectra.py --data_path $WORK/data/cifar10 --model MLP --dataset CIFAR10 --checkpoint=$WORK/nn_spectral_models/CIFAR10/MLP/SGD/checkpoint-00300.pt --out $WORK/nn_spectral_models/hessian_spectra/CIFAR10/MLP/bs64_test.hdf5 -test
+python get_exact_hessian_spectra.py --data_path $WORK/data/cifar10 --model MLP_CIF --dataset CIFAR10 --checkpoint=$WORK/nn_spectral_models/CIFAR10/MLP/SGD/checkpoint-00300.pt --out $WORK/nn_spectral_models/hessian_spectra/CIFAR10/MLP/bs64_test.hdf5 -test
