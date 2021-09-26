@@ -40,7 +40,7 @@ class Bike_NN(nn.Module):
         self.lin4 = nn.Linear(50, 1, bias=True)
 
     def forward(self, xb):
-        x = xb.view(-1,784)
+        x = xb.view(-1,13)
         x = F.relu(self.lin1(x))
         x = F.relu(self.lin2(x))
         x = F.relu(self.lin3(x))
