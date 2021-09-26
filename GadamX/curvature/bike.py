@@ -23,9 +23,11 @@ class BikeDataset(Dataset):
         else:
             self.data = self.data[n_train_data:]
         self.data = torch.as_tensor(self.data).float()
+        self.targets = self.data[:, -1]
+        self.data = self.data[:, :-1]
         
     def __len__(self):
         return len(self.data)
     
     def __getitem__(self, idx):
-        return self.data[idx, :-1], self.data[idx, -1]
+        return self.data[idx], self.targets[idx]
