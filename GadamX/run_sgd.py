@@ -414,6 +414,9 @@ for epoch in range(start_epoch, args.epochs):
         test_res = utils.eval(loaders['test'], model, criterion)
     else:
         test_res = {'loss': None, 'accuracy': None, 'top5_accuracy': None}
+        if args.dataset == "Bike":
+            test_res = {"loss": None}
+
 
     if args.swag and (epoch + 1) > args.swag_start:
         # If the frequency of collecting swag models is less than once per epoch - otherwise the models have been
