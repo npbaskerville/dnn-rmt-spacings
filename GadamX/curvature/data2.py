@@ -29,6 +29,7 @@ def datasets(
     if dataset == 'ImageNet32':
         ds = IMAGENET32
     elif dataset == "Bike":
+        path = path + ".csv"
         ds = BikeDataset
     else:
         ds = getattr(torchvision.datasets, dataset)
