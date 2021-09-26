@@ -400,7 +400,7 @@ for epoch in range(start_epoch, args.epochs):
         lr = args.lr_init
 
     classification = args.dataset != "Bike"
-    
+
     if args.swag and args.swag_c_epochs < 1 and epoch >= args.swag_start:
         # If mode collection is more frequent than once per epoch
         train_res = utils.train_epoch(loaders['train'], model, criterion, optimizer, verbose=args.verbose,
@@ -411,10 +411,10 @@ for epoch in range(start_epoch, args.epochs):
 
     # update batch norm parameters before testing
     utils.bn_update(loaders['train'], model)
-    test_res = utils.eval(loaders['test'], model, criterion)
+    test_res = utils.eval(loaders['test'], model, criterion, classification=classification)
 
     if epoch == 0 or epoch % args.eval_freq == args.eval_freq - 1 or epoch == args.epochs - 1:
-        test_res = utils.eval(loaders['test'], model, criterion)
+        test_res = utils.eval(loaders['test'], model, criterion, classification=classification)
     else:
         test_res = {'loss': None, 'accuracy': None, 'top5_accuracy': None}
         if args.dataset == "Bike":
@@ -430,8 +430,8 @@ for epoch in range(start_epoch, args.epochs):
         if epoch == 0 or epoch % args.eval_freq == args.eval_freq - 1 or epoch == args.epochs - 1:
             swag_model.set_swa()
             utils.bn_update(loaders['train'], swag_model)
-            train_res_swag = utils.eval(loaders['train'], swag_model, criterion, optimizer)
-            swag_res = utils.eval(loaders['test'], swag_model, criterion)
+            train_res_swag = utils.eval(loaders['train'], swag_model, criterion, optimizer, classification=classification)
+            swag_res = utils.eval(loaders['test'], swag_model, criterion, classification=classification)
 
         else:
             swag_res = {'loss': None, 'accuracy': None, "top5_accuracy": None}
