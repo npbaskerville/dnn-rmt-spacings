@@ -17,6 +17,6 @@ cd /home/jr19127/nn-spectral-spacings/GadamX
 
 
 # Execute code
-python run_sgd.py --dir $WORK/nn_spectral_models/Bike_MLP --data_path $WORK/data/Bike --model MLP --dataset Bike --use_test
+python run_sgd.py --dir $WORK/nn_spectral_models/Bike_MLP --data_path $WORK/data/Bike --model MLP_Bike --dataset Bike --use_test
 
 
