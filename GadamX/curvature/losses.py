@@ -44,11 +44,11 @@ def squared_error(model, input, target, backpacked_model=False):
     if backpacked_model:
         lossfunc = torch.nn.MSELoss()
         lossfunc = backpack.extend(lossfunc)
-        loss = lossfunc(output, target)
+        loss = lossfunc(output.squeeze(), target)
     else:
-        loss = F.mse_loss(output, target)
+        loss = F.mse_loss(output.squeeze(), target)
     return loss, output, {}
 
 
 def squared_error_func(model, input, target):
-    return lambda: model(input), lambda pred: F.mse_loss(pred, target)
+    return lambda: model(input), lambda pred: F.mse_loss(pred.squeeze(), target)
