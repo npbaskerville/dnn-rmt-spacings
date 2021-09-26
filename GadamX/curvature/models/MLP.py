@@ -2,7 +2,7 @@ import torch.nn as nn
 import torchvision.transforms as transforms
 import torch.nn.functional as F
 
-__all__ = ['MLP_CIF', 'MLP', 'MLP_med', 'MLP_big', 'MLP_sdp', 'MLP_deep']
+__all__ = ['MLP_CIF', 'MLP', 'MLP_med', 'MLP_big', 'MLP_sdp', 'MLP_deep', "MLP_Bike"]
 
 class NN_CIF(nn.Module):
     def __init__(self, num_classes=10, input_dim=28*28):
