@@ -23,7 +23,7 @@ class BikeDataset(Dataset):
         else:
             self.data = self.data[n_train_data:]
         self.data = torch.as_tensor(self.data).float()
-        self.targets = self.data[:, -1]
+        self.targets = self.data[:, -1]/1000
         self.data = self.data[:, :-1]
         
     def __len__(self):
