@@ -341,6 +341,8 @@ else:
     weight_decay = args.wd
 
 criterion = losses.cross_entropy
+if args.dataset == "Bike":
+    criterion = losses.squared_error
 
 optimizer = torch.optim.SGD(
     model.parameters(),

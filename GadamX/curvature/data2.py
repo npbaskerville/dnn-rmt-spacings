@@ -7,6 +7,7 @@ import torchvision
 import os
 
 from curvature.imagenet32 import IMAGENET32
+from curvature.bike import BikeDataset
 
 #assert torchvision.__version__ >= "0.4.0", "Expected torchvision version 0.4.0 but got " + torchvision.__version__
 
@@ -20,13 +21,15 @@ def datasets(
         val_size=0.1,
         train_subset=None,
         train_subset_seed=None):
-    assert dataset in {'CIFAR10', 'CIFAR100', 'MNIST', 'ImageNet32', 'ImageNet'}
+    assert dataset in {'CIFAR10', 'CIFAR100', 'MNIST', 'ImageNet32', 'ImageNet', "Bike"}
     print('Loading %s from %s' % (dataset, path))
 
     path = os.path.join(path, dataset.lower())
 
     if dataset == 'ImageNet32':
         ds = IMAGENET32
+    elif dataset == "Bike":
+        ds = BikeDataset
     else:
         ds = getattr(torchvision.datasets, dataset)
 

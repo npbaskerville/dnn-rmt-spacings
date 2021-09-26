@@ -31,6 +31,21 @@ class Mnist_NN(nn.Module):
         x = F.relu(self.lin2(x))
         return self.lin3(x)
 
+class Bike_NN(nn.Module):
+    def __init__(self, input_dim=13):
+        super().__init__()
+        self.lin1 = nn.Linear(input_dim, 100, bias=True)
+        self.lin2 = nn.Linear(100, 100, bias=True)
+        self.lin3 = nn.Linear(100, 50, bias=True)
+        self.lin4 = nn.Linear(50, 1, bias=True)
+
+    def forward(self, xb):
+        x = xb.view(-1,784)
+        x = F.relu(self.lin1(x))
+        x = F.relu(self.lin2(x))
+        x = F.relu(self.lin3(x))
+        return self.lin4(x)
+
 
 class Mnist_MLP_deep(nn.Module):
     def __init__(self, num_classes=10, input_dim=28*28):
@@ -172,3 +187,10 @@ class MLP_CIF:
         # transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
         # transforms.Normalize((0.45242316, 0.45249584, 0.46897713), (0.21943445, 0.22656967, 0.22850613))
     ])
+
+class MLP_Bike:
+    base = Bike_NN
+    args = list()
+    kwargs = dict()
+    # Default transform
+
