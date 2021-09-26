@@ -523,8 +523,8 @@ for epoch in range(start_epoch, args.epochs):
         table = table.split('\n')[2]
     print(table)
 
-    # if train_res['loss'] != train_res['loss']:
-    #    break
+    if train_res['loss'] != train_res['loss']:
+       raise RuntimeError("Nan loss!")
 
 if args.epochs % args.save_freq != 0:
     utils.save_checkpoint(
