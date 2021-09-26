@@ -32,7 +32,7 @@ class Mnist_NN(nn.Module):
         return self.lin3(x)
 
 class Bike_NN(nn.Module):
-    def __init__(self, input_dim=13):
+    def __init__(self, num_classes=1, input_dim=13):
         super().__init__()
         self.lin1 = nn.Linear(input_dim, 100, bias=True)
         self.lin2 = nn.Linear(100, 100, bias=True)
