@@ -192,5 +192,7 @@ class MLP_Bike:
     base = Bike_NN
     args = list()
     kwargs = dict()
+    transform_train = None
+    transform_test = None
     # Default transform
 
