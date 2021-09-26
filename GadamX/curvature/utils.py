@@ -289,7 +289,7 @@ def train_epoch_verbose(loader, model, criterion, optimizer, cuda=True, subset=N
     }
 
 
-def eval(loader, model, criterion, cuda=True, verbose=False):
+def eval(loader, model, criterion, cuda=True, verbose=False, classification=True):
     loss_sum = 0.0
     correct_1 = 0.0
     correct_5 = 0.0
@@ -319,23 +319,29 @@ def eval(loader, model, criterion, cuda=True, verbose=False):
 
             #pred = output.data.argmax(1, keepdim=True)
             #correct += pred.eq(target.data.view_as(pred)).sum().item()
+            if classification:
+                _, pred = output.topk(5, 1, True, True)
+                pred = pred.t()
+                correct = pred.eq(target.reshape(1, -1).expand_as(pred))
+                correct_1 += correct[0].reshape(-1).float().sum(0) / num_objects_total * 100.0
+                correct_5 += correct[:5].reshape(-1).float().sum(0) / num_objects_total * 100.0
+    if classification:
+        correct_1 = correct_1.cpu()
+        correct_5 = correct_5.cpu()
 
-            _, pred = output.topk(5, 1, True, True)
-            pred = pred.t()
-            correct = pred.eq(target.reshape(1, -1).expand_as(pred))
-            correct_1 += correct[0].reshape(-1).float().sum(0) / num_objects_total * 100.0
-            correct_5 += correct[:5].reshape(-1).float().sum(0) / num_objects_total * 100.0
-
-    correct_1 = correct_1.cpu()
-    correct_5 = correct_5.cpu()
-
-    return {
-        'loss': loss_sum / num_objects_total,
-        'accuracy': correct_1,
-        'top5_accuracy': correct_5,
-        'stats': {key: value / num_objects_total for key, value in stats_sum.items()}
-    }
-
+        return {
+            'loss': loss_sum / num_objects_total,
+            'accuracy': correct_1,
+            'top5_accuracy': correct_5,
+            'stats': {key: value / num_objects_total for key, value in stats_sum.items()}
+        }
+    else:
+        return {
+            'loss': loss_sum / num_objects_total,
+            'accuracy': -1,
+            'top5_accuracy': -1,
+            'stats': {key: value / num_objects_total for key, value in stats_sum.items()}
+        }
 
 def predict(loader, model, verbose=False):
     predictions = list()
