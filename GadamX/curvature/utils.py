@@ -39,7 +39,7 @@ def adjust_learning_rate_and_momentum(optimizer, lr, momentum):
 
 
 def train_epoch(loader, model, criterion, optimizer, cuda=True, verbose=False, subset=None, backpacked_model=False,
-                swag_model=None, swag_batch_c=64,
+                swag_model=None, swag_batch_c=64, classification=True,
                 *backpack_extensions):
     """
     Train the model with one pass over the entire dataset (i.e. one epoch)
@@ -116,35 +116,45 @@ def train_epoch(loader, model, criterion, optimizer, cuda=True, verbose=False, s
         for key, value in stats.items():
             stats_sum[key] += value * input.size(0)
 
-        #pred = output.data.argmax(1, keepdim=True)
-        #correct += pred.eq(target.data.view_as(pred)).sum().item()
-        _, pred = output.topk(5, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.reshape(1, -1).expand_as(pred))
-        correct_1 += correct[0].reshape(-1).float().sum(0)
-        correct_5 += correct[:5].reshape(-1).float().sum(0)
-
         num_objects_current += input.size(0)
 
-        if verbose and 10 * (i + 1) / num_batches >= verb_stage + 1:
-            print('Stage %d/10. Loss: %12.4f. Acc: %6.2f. Top 5 Acc: %6.2f' % (
-                verb_stage + 1, loss_sum / num_objects_current,
-                correct_1 / num_objects_current * 100.0,
-                correct_5 / num_objects_current * 100.0
-            ))
-            verb_stage += 1
-        # print(loss_sum / num_objects_current)
+        #pred = output.data.argmax(1, keepdim=True)
+        #correct += pred.eq(target.data.view_as(pred)).sum().item()
+        if classification:
+            _, pred = output.topk(5, 1, True, True)
+            pred = pred.t()
+            correct = pred.eq(target.reshape(1, -1).expand_as(pred))
+            correct_1 += correct[0].reshape(-1).float().sum(0)
+            correct_5 += correct[:5].reshape(-1).float().sum(0)
+
+
+            if verbose and 10 * (i + 1) / num_batches >= verb_stage + 1:
+                print('Stage %d/10. Loss: %12.4f. Acc: %6.2f. Top 5 Acc: %6.2f' % (
+                    verb_stage + 1, loss_sum / num_objects_current,
+                    correct_1 / num_objects_current * 100.0,
+                    correct_5 / num_objects_current * 100.0
+                ))
+                verb_stage += 1
+            # print(loss_sum / num_objects_current)
         if swag_model is not None and i % swag_batch_c == 0:
             swag_model.collect_model(model)
 
-    correct_5 = correct_5.cpu()
-    correct_1 = correct_1.cpu()
-    return {
-        'loss': loss_sum / num_objects_current,
-        'accuracy': correct_1 / num_objects_current * 100.0,
-        'top5_accuracy': correct_5 / num_objects_current * 100.0,
-        'stats': {key: value / num_objects_current for key, value in stats_sum.items()}
-    }
+    if classification:
+        correct_5 = correct_5.cpu()
+        correct_1 = correct_1.cpu()
+        return {
+            'loss': loss_sum / num_objects_current,
+            'accuracy': correct_1 / num_objects_current * 100.0,
+            'top5_accuracy': correct_5 / num_objects_current * 100.0,
+            'stats': {key: value / num_objects_current for key, value in stats_sum.items()}
+        }
+    else:
+        return {
+            'loss': loss_sum / num_objects_current,
+            'accuracy': -1,
+            'top5_accuracy': -1,
+            'stats': {key: value / num_objects_current for key, value in stats_sum.items()}
+        }
 
 
 def train_epoch_adaptive(loader, model, criterion, optimizer, cuda=True, subset=None, verbose=False):

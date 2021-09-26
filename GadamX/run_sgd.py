@@ -399,12 +399,15 @@ for epoch in range(start_epoch, args.epochs):
     else:
         lr = args.lr_init
 
+    classification = args.dataset != "Bike"
+    
     if args.swag and args.swag_c_epochs < 1 and epoch >= args.swag_start:
         # If mode collection is more frequent than once per epoch
         train_res = utils.train_epoch(loaders['train'], model, criterion, optimizer, verbose=args.verbose,
-                                      swag_model=swag_model, swag_batch_c=int(len(loaders['train']) * args.swag_c_epochs))
+                                      swag_model=swag_model, swag_batch_c=int(len(loaders['train']) * args.swag_c_epochs),
+                                      classification=classification)
     else:
-        train_res = utils.train_epoch(loaders['train'], model, criterion, optimizer, verbose=args.verbose)
+        train_res = utils.train_epoch(loaders['train'], model, criterion, optimizer, verbose=args.verbose, classification=classification)
 
     # update batch norm parameters before testing
     utils.bn_update(loaders['train'], model)
