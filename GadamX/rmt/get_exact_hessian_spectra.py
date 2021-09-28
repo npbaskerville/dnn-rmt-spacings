@@ -23,6 +23,7 @@ parser.add_argument("--checkpoint", type=str, required=True)
 parser.add_argument("--bs", type=int, default=64)
 parser.add_argument("-test", action="store_true", help="If to eval on test set.")
 parser.add_argument("--out", type=str, default="output/spectrum.hdf5")
+parser.add_argument("-regression", action="store_true", type=bool)
 
 args = parser.parse_args()
 
@@ -90,7 +91,7 @@ if batch_size > 128:
 #device = torch.device('cpu')
 model.to(device)
 num_parametrs = sum([p.numel() for p in model.parameters()])
-criterion = losses.cross_entropy
+criterion = losses.squared_error if args.regression else losses.cross_entropy
 
 
 outfile = h5py.File(args.out, "w")
