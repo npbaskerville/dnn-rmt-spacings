@@ -23,7 +23,7 @@ parser.add_argument("--checkpoint", type=str, required=True)
 parser.add_argument("--bs", type=int, default=64)
 parser.add_argument("-test", action="store_true", help="If to eval on test set.")
 parser.add_argument("--out", type=str, default="output/spectrum.hdf5")
-parser.add_argument("-regression", action="store_true", type=bool)
+parser.add_argument("-regression", action="store_true")
 
 args = parser.parse_args()
 
