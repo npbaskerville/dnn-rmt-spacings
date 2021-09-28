@@ -1,7 +1,7 @@
 #!/bin/bash
 
-#PBS -l walltime=48:00:00
-#PBS -l select=1:ncpus=8:mem=300gb
+#PBS -l walltime=72:00:00
+#PBS -l select=1:ncpus=8:mem=500gb
 
 
 module load lang/gcc/9.1.0 
