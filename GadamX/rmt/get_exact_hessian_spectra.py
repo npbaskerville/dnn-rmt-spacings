@@ -24,8 +24,12 @@ parser.add_argument("--bs", type=int, default=64)
 parser.add_argument("-test", action="store_true", help="If to eval on test set.")
 parser.add_argument("--out", type=str, default="output/spectrum.hdf5")
 parser.add_argument("-regression", action="store_true")
+parser.add_argument("-fp16", action="store_true")
+
 
 args = parser.parse_args()
+
+dtype = torch.float16 if args.fp16 else torch.float32
 
 network = args.model
 epochsave = int(args.checkpoint.split('checkpoint-')[1].split('.')[0])
@@ -89,7 +93,7 @@ if batch_size > 128:
     device = "cpu"
 
 #device = torch.device('cpu')
-model.to(device)
+model.to(device=device, dtype=dtype)
 num_parametrs = sum([p.numel() for p in model.parameters()])
 criterion = losses.squared_error if args.regression else losses.cross_entropy
 
@@ -99,10 +103,10 @@ hessian_evals = outfile.create_dataset("hessian_evals", (int(math.ceil(n_data / 
 
 model.zero_grad()
 for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
-    hessian = torch.zeros(num_parametrs, num_parametrs).cpu()
+    hessian = torch.zeros(num_parametrs, num_parametrs, dtype=dtype).cpu()
     model.zero_grad()
-    input = input.to(device)
-    target = target.to(device)
+    input = input.to(device=device, dtype=dtype)
+    target = target.to(device=device, dtype=dtype)
     loss, _, _ = criterion(model, input, target)
     loss *= input.size()[0]
 
