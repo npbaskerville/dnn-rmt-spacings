@@ -4,8 +4,8 @@
 #PBS -l select=1:ncpus=8:ngpus=1:mem=100gb
 
 module load lang/gcc/9.1.0 
-module load lang/cuda
-module load lang/python/anaconda/pytorch
+module load lang/python/anaconda/3.8.5-2021-cuda-11.2.2
+module load lang/python/anaconda/3.8.8-2021.05-torch
 
 cd /home/jr19127/nn-spectral-spacings/GadamX/rmt
 
