@@ -106,7 +106,7 @@ for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     hessian = torch.zeros(num_parametrs, num_parametrs, dtype=dtype).cpu()
     model.zero_grad()
     input = input.to(device=device, dtype=dtype)
-    target = target.to(device=device, dtype=dtype)
+    target = target.to(device=device)
     loss, _, _ = criterion(model, input, target)
     loss *= input.size()[0]
 
