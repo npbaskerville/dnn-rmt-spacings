@@ -90,7 +90,7 @@ if torch.cuda.is_available():
 else:
     device = torch.device('cpu')
 if batch_size > 128:
-    device = "cpu"
+    device = torch.device('cpu')
 
 #device = torch.device('cpu')
 model.to(device=device, dtype=dtype)
