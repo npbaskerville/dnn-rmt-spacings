@@ -109,7 +109,7 @@ for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
 
     output = model(input)
 
-    def output_fn(parameters):
+    def output_fn(*parameters):
         return model(input)
 
     jacobian = torch.autograd.functional.jacobian(output_fn, tuple(model.parameters()))
