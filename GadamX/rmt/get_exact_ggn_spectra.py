@@ -107,7 +107,7 @@ for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     model.zero_grad()
     input = input.to(device=device, dtype=dtype)
     output = model(input)
-
+    print(output.shape)
     jacobian = torch.autograd.grad(output, model.parameters(), create_graph=True)
     print(jacobian.shape)
     ggn = jacobian.T @ jacobian
