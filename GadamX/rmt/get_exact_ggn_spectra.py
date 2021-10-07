@@ -108,9 +108,9 @@ for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     input = input.to(device=device, dtype=dtype)
     output = model(input)
     print(output.shape)
-    jacobian = torch.autograd.grad(output, model.parameters(), create_graph=True)
-    print(jacobian.shape)
-    ggn = jacobian.T @ jacobian
+    grads = [torch.autograd.grad(out, model.parameters(), create_graph=True) for out in output]
+    ggn = sum([grad.T @ grad for grad in grads])/len(grads)
+    print(ggn.shape)
 
     ggn_evals[batch_ind] = np.linalg.eigvalsh(ggn.detach().cpu().numpy())
-    del ggn, jacobian
+    del ggn, grads
