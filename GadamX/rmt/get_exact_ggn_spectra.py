@@ -109,7 +109,7 @@ for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     output = model(input)
     print(output.shape)
     grads = [torch.autograd.grad(out, model.parameters(), create_graph=True) for out in output]
-    grads = torch.cat([g.reshape(-1) for g in grads])
+    grads = [torch.cat([g.reshape(-1) for g in item_grads]) for item_grads in grads]
     ggn = sum([grad.T @ grad for grad in grads])/len(grads)
     print(ggn.shape)
 
