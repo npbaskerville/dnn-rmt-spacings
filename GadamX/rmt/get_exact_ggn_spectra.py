@@ -112,7 +112,7 @@ for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     def output_fn(parameters):
         return model(input)
 
-    jacobian = torch.autograd.functional.jacobian(output_fn, model.parameters())
+    jacobian = torch.autograd.functional.jacobian(output_fn, tuple(model.parameters()))
     print(jacobian.shape)
     ggn = jacobian.T @ jacobian
     ggn_evals[batch_ind] = np.linalg.eigvalsh(ggn.detach().cpu().numpy())
