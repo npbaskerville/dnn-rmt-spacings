@@ -100,21 +100,17 @@ criterion = losses.squared_error if args.regression else losses.cross_entropy
 outfile = h5py.File(args.out, "w")
 ggn_evals = outfile.create_dataset("ggn_evals", (int(math.ceil(n_data / batch_size)), num_parametrs), dtype=float)
 
+
 model.zero_grad()
 for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     hessian = torch.zeros(num_parametrs, num_parametrs, dtype=dtype).cpu()
     model.zero_grad()
     input = input.to(device=device, dtype=dtype)
-    target = target.to(device=device)
-
     output = model(input)
 
-    def output_fn(*parameters):
-        return model(input)
-
-    jacobian = torch.autograd.functional.jacobian(output_fn, tuple(model.parameters()))
-    print(jacobian[0].shape)
-    print(len(jacobian))
+    jacobian = torch.autograd.grad(output, model.parameters(), create_graph=True)
+    print(jacobian.shape)
     ggn = jacobian.T @ jacobian
+
     ggn_evals[batch_ind] = np.linalg.eigvalsh(ggn.detach().cpu().numpy())
-    del ggn
+    del ggn, jacobian
