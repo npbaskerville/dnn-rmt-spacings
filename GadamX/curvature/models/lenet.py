@@ -7,7 +7,7 @@ __all__ = ['LeNet']
 
 
 class LeNetBase(nn.Module):
-    def __init__(self, num_classes=10, **kwargs):
+    def __init__(self, num_classes=10):
         super().__init__()
         self.features = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=6, kernel_size=5),
@@ -18,11 +18,11 @@ class LeNetBase(nn.Module):
             nn.MaxPool2d(2, 2),
         )
         self.classifier = nn.Sequential(
-            nn.Linear(16 * 5 * 5, 120),
+            nn.Linear(16 * 5 * 5, 35),
             nn.ReLU(True),
-            nn.Linear(120, 84),
+            nn.Linear(35, 50),
             nn.ReLU(True),
-            nn.Linear(84, num_classes),
+            nn.Linear(50, num_classes),
         )
 
     def forward(self, x):

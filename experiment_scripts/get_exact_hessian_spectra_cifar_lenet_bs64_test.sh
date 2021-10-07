@@ -17,4 +17,4 @@ cd /home/jr19127/nn-spectral-spacings/GadamX/rmt
 
 
 # Execute code
-python get_exact_hessian_spectra.py --data_path $WORK/data/cifar10 --model LeNet --dataset CIFAR10 --checkpoint=$WORK/nn_spectral_models/CIFAR10/LeNet/SGD/checkpoint-00300.pt --out $WORK/nn_spectral_models/hessian_spectra/CIFAR10/LeNet/bs64_test.hdf5 -test -fp16
+python get_exact_hessian_spectra.py --data_path $WORK/data/cifar10 --model LeNet --dataset CIFAR10 --checkpoint=$WORK/nn_spectral_models/CIFAR10/LeNetsmall/SGD/checkpoint-00300.pt --out $WORK/nn_spectral_models/hessian_spectra/CIFAR10/LeNetsmall/bs64_test.hdf5 -test -fp16
