@@ -7,6 +7,7 @@ import torchvision
 import os
 
 from curvature.imagenet32 import IMAGENET32
+from curvature.bike import BikeDataset
 
 #assert torchvision.__version__ >= "0.4.0", "Expected torchvision version 0.4.0 but got " + torchvision.__version__
 
@@ -20,13 +21,16 @@ def datasets(
         val_size=0.1,
         train_subset=None,
         train_subset_seed=None):
-    assert dataset in {'CIFAR10', 'CIFAR100', 'MNIST', 'ImageNet32', 'ImageNet'}
+    assert dataset in {'CIFAR10', 'CIFAR100', 'MNIST', 'ImageNet32', 'ImageNet', "Bike"}
     print('Loading %s from %s' % (dataset, path))
 
     path = os.path.join(path, dataset.lower())
 
     if dataset == 'ImageNet32':
         ds = IMAGENET32
+    elif dataset == "Bike":
+        path = path + ".csv"
+        ds = BikeDataset
     else:
         ds = getattr(torchvision.datasets, dataset)
 
@@ -41,7 +45,7 @@ def datasets(
     else:
         raise TypeError("val_size needs to be either an int or a float, but got "+type(val_size))
     print(train_set.targets)
-    num_classes = torch.max(train_set.targets).item() + 1
+    num_classes = torch.max(torch.as_tensor(train_set.targets)).item() + 1
     if use_validation:
         print('Using %d samples for validation [deterministic split]' % (val_size))
         train_set.data = train_set.data[:-val_size]
@@ -69,7 +73,7 @@ def datasets(
         train_set.data = train_set.data[order[:train_subset]]
         train_set.targets = np.array(train_set.targets)[order[:train_subset]].tolist()
 
-    print('Using train (%d) + test (%d)' % (train_set.train_data.shape[0], test_set.test_data.shape[0]))
+    #print('Using train (%d) + test (%d)' % (train_set.train_data.shape[0], test_set.test_data.shape[0]))
 
     return \
         {

@@ -341,6 +341,8 @@ else:
     weight_decay = args.wd
 
 criterion = losses.cross_entropy
+if args.dataset == "Bike":
+    criterion = losses.squared_error
 
 optimizer = torch.optim.SGD(
     model.parameters(),
@@ -397,21 +399,27 @@ for epoch in range(start_epoch, args.epochs):
     else:
         lr = args.lr_init
 
+    classification = args.dataset != "Bike"
+
     if args.swag and args.swag_c_epochs < 1 and epoch >= args.swag_start:
         # If mode collection is more frequent than once per epoch
         train_res = utils.train_epoch(loaders['train'], model, criterion, optimizer, verbose=args.verbose,
-                                      swag_model=swag_model, swag_batch_c=int(len(loaders['train']) * args.swag_c_epochs))
+                                      swag_model=swag_model, swag_batch_c=int(len(loaders['train']) * args.swag_c_epochs),
+                                      classification=classification)
     else:
-        train_res = utils.train_epoch(loaders['train'], model, criterion, optimizer, verbose=args.verbose)
+        train_res = utils.train_epoch(loaders['train'], model, criterion, optimizer, verbose=args.verbose, classification=classification)
 
     # update batch norm parameters before testing
     utils.bn_update(loaders['train'], model)
-    test_res = utils.eval(loaders['test'], model, criterion)
+    test_res = utils.eval(loaders['test'], model, criterion, classification=classification)
 
     if epoch == 0 or epoch % args.eval_freq == args.eval_freq - 1 or epoch == args.epochs - 1:
-        test_res = utils.eval(loaders['test'], model, criterion)
+        test_res = utils.eval(loaders['test'], model, criterion, classification=classification)
     else:
         test_res = {'loss': None, 'accuracy': None, 'top5_accuracy': None}
+        if args.dataset == "Bike":
+            test_res = {"loss": None}
+
 
     if args.swag and (epoch + 1) > args.swag_start:
         # If the frequency of collecting swag models is less than once per epoch - otherwise the models have been
@@ -422,8 +430,8 @@ for epoch in range(start_epoch, args.epochs):
         if epoch == 0 or epoch % args.eval_freq == args.eval_freq - 1 or epoch == args.epochs - 1:
             swag_model.set_swa()
             utils.bn_update(loaders['train'], swag_model)
-            train_res_swag = utils.eval(loaders['train'], swag_model, criterion, optimizer)
-            swag_res = utils.eval(loaders['test'], swag_model, criterion)
+            train_res_swag = utils.eval(loaders['train'], swag_model, criterion, optimizer, classification=classification)
+            swag_res = utils.eval(loaders['test'], swag_model, criterion, classification=classification)
 
         else:
             swag_res = {'loss': None, 'accuracy': None, "top5_accuracy": None}
@@ -516,7 +524,7 @@ for epoch in range(start_epoch, args.epochs):
     print(table)
 
     if train_res['loss'] != train_res['loss']:
-       break
+       raise RuntimeError("Nan loss!")
 
 if args.epochs % args.save_freq != 0:
     utils.save_checkpoint(

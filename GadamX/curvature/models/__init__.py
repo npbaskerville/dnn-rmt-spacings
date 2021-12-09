@@ -27,6 +27,8 @@ from .logistic_regression import *
 # Added by Xingchen on 1 Jan - added Shake-shake architecture
 from .shakeshake import *
 
+from .lenet import LeNet
+
 import torchvision.models as modelstorch
 resnet50 = modelstorch.resnet50(pretrained=False)
 resnet18 = modelstorch.resnet18()

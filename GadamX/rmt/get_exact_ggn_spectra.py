@@ -1,5 +1,5 @@
 """
-Obtain the hessian spectrum over minibatches of some batch size.
+Obtain the GGN spectrum over minibatches of some batch size.
 """
 import argparse
 
@@ -92,28 +92,25 @@ else:
 if batch_size > 128:
     device = torch.device('cpu')
 
-#device = torch.device('cpu')
 model.to(device=device, dtype=dtype)
 num_parametrs = sum([p.numel() for p in model.parameters()])
 criterion = losses.squared_error if args.regression else losses.cross_entropy
 
 
 outfile = h5py.File(args.out, "w")
-hessian_evals = outfile.create_dataset("hessian_evals", (int(math.ceil(n_data / batch_size)), num_parametrs), dtype=float)
+ggn_evals = outfile.create_dataset("ggn_evals", (int(math.ceil(n_data / batch_size)), num_parametrs), dtype=float)
+
 
 model.zero_grad()
 for batch_ind, (input, target) in tqdm(enumerate(full_loader)):
     hessian = torch.zeros(num_parametrs, num_parametrs, dtype=dtype).cpu()
     model.zero_grad()
     input = input.to(device=device, dtype=dtype)
-    target = target.to(device=device)
-    loss, _, _ = criterion(model, input, target)
-    loss *= input.size()[0]
+    output = model(input)
+    print(output.shape)
+    grads = [torch.autograd.grad(out, model.parameters(), create_graph=True) for out in output]
+    grads = [torch.cat([g.reshape(-1) for g in item_grads]).unsqueeze(dim=1) for item_grads in grads]
+    ggn = sum([grad @ grad.T for grad in grads])/len(grads)
 
-    grad_list = torch.autograd.grad(loss, model.parameters(), create_graph=True)
-    grad_i = torch.cat([g.reshape(-1) for g in grad_list])
-    for i in range(0, num_parametrs):
-        hessian[i] = torch.cat(
-            [g.reshape(-1) for g in torch.autograd.grad(grad_i[i], model.parameters(), create_graph=True)]).cpu()
-    hessian_evals[batch_ind] = np.linalg.eigvalsh(hessian.detach().cpu().numpy())
-    del hessian
+    ggn_evals[batch_ind] = np.linalg.eigvalsh(ggn.detach().cpu().numpy())
+    del ggn, grads

@@ -28,3 +28,27 @@ def cross_entropy(model, input, target, backpacked_model=False):
 
 def cross_entropy_func(model, input, target):
     return lambda: model(input), lambda pred: F.cross_entropy(pred, target)
+
+
+def squared_error(model, input, target, backpacked_model=False):
+    """
+    Evaluate the squared error loss.
+    :param model:
+    :param input:
+    :param target:
+    :param backpacked_model: if the model uses backpack facility, this toggle will backpack.extend() the
+    loss function for the additional functionalities
+    :return:
+    """
+    output = model(input)
+    if backpacked_model:
+        lossfunc = torch.nn.MSELoss()
+        lossfunc = backpack.extend(lossfunc)
+        loss = lossfunc(output.squeeze(), target)
+    else:
+        loss = F.mse_loss(output.squeeze(), target)
+    return loss, output, {}
+
+
+def squared_error_func(model, input, target):
+    return lambda: model(input), lambda pred: F.mse_loss(pred.squeeze(), target)

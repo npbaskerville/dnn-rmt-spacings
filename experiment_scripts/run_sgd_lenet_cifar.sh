@@ -17,6 +17,4 @@ cd /home/jr19127/nn-spectral-spacings/GadamX
 
 
 # Execute code
-python run_sgd.py --dir $WORK/nn_spectral_models/MNIST_MLP --data_path $WORK/data/bike.csv --model MLP_Bike --dataset Bike --use_test
-
-
+python run_sgd.py --dir $WORK/nn_spectral_models/CIFAR10/LeNetsmall --data_path $WORK/data/CIFAR10 --model LeNet --dataset CIFAR10 --use_test
